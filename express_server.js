@@ -1,8 +1,13 @@
-var express = require('express');
-var app = express();
-var PORT = 8080; //this is a default port
+const express = require('express');
+const app = express();
+const PORT = 8080; //this is a default port
 
-var urlDatabase = {
+//tells express app to use EJS as its templating engine
+app.set('view engine', 'ejs');
+
+
+//Object to keep track of URLs and their shortened forms. Want to show this data on URLs page
+let urlDatabase = {
   'b2xVn2' : 'http://www.lighthouselabs.ca',
   '9sm5xK': 'http://www.google.com'
 };
@@ -12,8 +17,16 @@ app.get('/', (req, res) => {
   res.send('Hello!');
 });
 
-app.get('/urls.json', (req, res) => {
-  res.json(urlDatabase);
+// app.get('/urls.json', (req, res) => {
+//   res.json(urlDatabase);
+// });
+
+//render: look up file & .send built in
+app.get('/urls', (req, res) => {
+  let templateVars = { //when sending vars to an ejs template, need to send them in object, even if only one variable
+    urls: urlDatabase
+  }
+  res.render('urls_index', templateVars);
 });
 
 app.get('/hello', (req, res) => {
