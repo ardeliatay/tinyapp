@@ -7,9 +7,16 @@ const bodyParser = require('body-parser');
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 
-function generateRandomString() {
 
+function generateRandomString() {
+  var text = '';
+  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+  for (var i = 0; i < 6; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  return text;
 }
+
 //Object to keep track of URLs and their shortened forms. Want to show this data on URLs page
 let urlDatabase = {
   'b2xVn2' : 'http://www.lighthouselabs.ca',
@@ -34,8 +41,12 @@ app.get('/urls', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
-  console.log(req.body);
-  res.send('Ok');
+  let randomString = generateRandomString();
+  urlDatabase[randomString] = req.body.longURL
+  console.log(req.body.longURL);
+  //.post usually uses .body
+  // res.send('Ok');
+  res.send(`http://localhost:${PORT}/urls/${[randomString]}`);
 });
 
 app.get('/urls/new', (req, res) => {
@@ -45,6 +56,7 @@ app.get('/urls/new', (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   //:shortURL is the key to req.params
   //req.params accesses database of {'shortURL': ___}
+  //.get usually uses .params
   let shortURLKey = req.params['shortURL'];
   let longURL = urlDatabase[shortURLKey];
   res.redirect(longURL);
@@ -63,5 +75,5 @@ app.get('/hello', (req, res) => {
 
 
 app.listen(PORT, () => {
-  console.log(`Example app listening on port ${PORT}!`);
+  console.log(`Tinyapp listening on port ${PORT}!`);
 });
