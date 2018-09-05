@@ -7,7 +7,9 @@ const bodyParser = require('body-parser');
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 
+function generateRandomString() {
 
+}
 //Object to keep track of URLs and their shortened forms. Want to show this data on URLs page
 let urlDatabase = {
   'b2xVn2' : 'http://www.lighthouselabs.ca',
@@ -38,7 +40,15 @@ app.post('/urls', (req, res) => {
 
 app.get('/urls/new', (req, res) => {
   res.render('urls_new');
-})
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  //:shortURL is the key to req.params
+  //req.params accesses database of {'shortURL': ___}
+  let shortURLKey = req.params['shortURL'];
+  let longURL = urlDatabase[shortURLKey];
+  res.redirect(longURL);
+});
 
 app.get('/urls/:id', (req, res) => {
   let templateVars = {
