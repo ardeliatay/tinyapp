@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <title>TinyApp</title>
+</head>
+<body>
+  <ul>
+    <% for (let urlID in shortURL) { %>
+      <li><%= shortURL[urlID] %> : <%= urlID %></li>
+    <% }; %>
+  </ul>
+</body>
+</html>
