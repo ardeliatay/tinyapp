@@ -9,18 +9,11 @@
     <p>
       <h2>ShortURL: <%= shortURL %></h2>
     </p>
+
   </header>
-  <ul>
-    <% for (let shortURL in urls) { %>
-      <li>
-        <!-- <%= shortURL %> : <%= urls[shortURL] %> -->
         <form method="POST" action="/urls/<%= shortURL %>/delete">
-          <label for=""></label>
-          <input id="id" type="text" name="id" value="Enter new URL">
+          <input id="id" type="text" name="longURL" value="Enter new URL">
           <button type="submit">Update</button>
         </form>
-      </li>
-    <% }; %>
-  </ul>
 </body>
 </html>

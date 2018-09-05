@@ -2,10 +2,13 @@ const express = require('express');
 const app = express();
 const PORT = 8080; //this is a default port
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+
 
 //tells express app to use EJS as its templating engine
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 
 
 function generateRandomString() {
@@ -65,21 +68,21 @@ app.get("/u/:shortURL", (req, res) => {
 app.get('/urls/:id', (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
-    urls: urlDatabase
+    // urls: urlDatabase
   };
 
   res.render('urls_show', templateVars)
 });
 
-app.post('/urls/:id/', (req, res) => {
-  urlDatabase[req.params.id] = req.body.id
+app.post('/urls/:id', (req, res) => {
+  urlDatabase[req.params.id] = req.body.longURL;
   res.redirect('/urls');
-})
+});
 
 app.post('/urls/:id/delete', (req, res) => {
   delete urlDatabase[req.params.id];
   res.redirect('/urls');
-})
+});
 
 
 // app.get('/hello', (req, res) => {

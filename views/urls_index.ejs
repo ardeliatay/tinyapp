@@ -11,7 +11,10 @@
     <% for (let urlName in urls) { %>
       <li>
         <%= urlName %> : <a href="<%= urls[urlName] %>"><%= urls[urlName] %></a>
-        <form method="POST" action="/urls/<%= urlName %>/delete"><button type="submit">Delete</button></form>
+        <a href="/urls/<%= urlName %>">Edit</a>
+        <form method="POST" action="/urls/<%= urlName %>/delete">
+          <button type="submit">Delete</button>
+        </form>
       </li>
     <% }; %>
   </ul>
