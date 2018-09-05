@@ -1,9 +1,11 @@
 const express = require('express');
 const app = express();
 const PORT = 8080; //this is a default port
+const bodyParser = require('body-parser');
 
 //tells express app to use EJS as its templating engine
 app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({extended: true}));
 
 
 //Object to keep track of URLs and their shortened forms. Want to show this data on URLs page
@@ -28,6 +30,15 @@ app.get('/urls', (req, res) => {
   }
   res.render('urls_index', templateVars);
 });
+
+app.post('/urls', (req, res) => {
+  console.log(req.body);
+  res.send('Ok');
+});
+
+app.get('/urls/new', (req, res) => {
+  res.render('urls_new');
+})
 
 app.get('/urls/:id', (req, res) => {
   let templateVars = {
