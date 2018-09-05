@@ -64,14 +64,21 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.get('/urls/:id', (req, res) => {
   let templateVars = {
-    shortURL: urlDatabase
+    shortURL: req.params.id,
+    urls: urlDatabase
   };
+
   res.render('urls_show', templateVars)
 });
 
-app.get('/hello', (req, res) => {
-  res.send('<html><body>Hello <b>World</b></body></html>\n');
-});
+app.post('/urls/:id/delete', (req, res) => {
+  delete urlDatabase[req.params.id];
+  res.redirect('/urls');
+})
+
+// app.get('/hello', (req, res) => {
+//   res.send('<html><body>Hello <b>World</b></body></html>\n');
+// });
 
 
 app.listen(PORT, () => {

@@ -9,7 +9,10 @@
   </header>
   <ul>
     <% for (let urlName in urls) { %>
-      <li><%= urlName %> : <%= urls[urlName] %></li>
+      <li>
+        <%= urlName %> : <%= urls[urlName] %>
+        <form method="POST" action="/urls/<%= urlName %>/delete"><button type="submit">Delete</button></form>
+      </li>
     <% }; %>
   </ul>
   <a href='#'></a>

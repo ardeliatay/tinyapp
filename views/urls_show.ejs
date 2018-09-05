@@ -8,8 +8,8 @@
     <% include ./partials/_header %>
   </header>
   <ul>
-    <% for (let urlID in shortURL) { %>
-      <li><%= shortURL[urlID] %> : <%= urlID %></li>
+    <% for (let shortURL in urls) { %>
+      <li><%= shortURL %> : <%= urls[shortURL] %> </li>
     <% }; %>
   </ul>
 </body>
