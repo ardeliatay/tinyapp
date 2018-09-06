@@ -58,7 +58,11 @@ let urlDatabase = {
 };
 
 app.get('/', (req, res) => {
-  res.send('Hello!');
+  res.render('urls_home');
+});
+
+app.get('/', (req, res) => {
+  res.redirect('/register');
 });
 
 // app.get('/urls.json', (req, res) => {
@@ -68,7 +72,7 @@ app.get('/', (req, res) => {
 app.get('/urls', (req, res) => {
   let templateVars = { //when sending vars to an ejs template, need to send them in object, even if only one variable
     urls: urlDatabase,
-    username: req.cookies['username']
+    username: req.cookies['user_id']
   };
   res.render('urls_index', templateVars);
 });
@@ -84,7 +88,7 @@ app.post('/urls', (req, res) => {
 
 app.get('/urls/new', (req, res) => {
   let templateVars = {
-    username: req.cookies['username']
+    username: req.cookies['user_id']
   }
   res.render('urls_new', templateVars);
 });
@@ -100,7 +104,7 @@ app.get("/u/:shortURL", (req, res) => {
 app.get('/urls/:id', (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
-    username: req.cookies['username']
+    username: req.cookies['user_id']
   };
   res.render('urls_show', templateVars)
 });
@@ -116,19 +120,19 @@ app.post('/urls/:id/delete', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  res.render('login');
+  res.render('login', users);
 });
 
 
 app.post('/login', (req, res) => {
   const {email, password} = req.body;
-  const user = users.find(u => u.email === email);
-  res.cookie('userId', req.body.userId)
+  if (!email || !password)
+    res.status(400).send('Thou Shall Not Pass');
   res.redirect('/urls');
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('username', req.body.username);
+  res.clearCookie('user_id', userId);
   res.redirect('/urls');
 });
 
@@ -138,6 +142,12 @@ app.get('/register', (req, res) => {
 
 app.post('/register', (req, res) => {
   const {email, password} = req.body;
+  if (!email || !password)
+    res.status(400).send('Thou Shall Not Pass');
+  for (var key in users) {
+    if (email === email)
+      res.status(400).send('Thou Shall Not Pass');
+  }
   let userId = generateRandomId();
   users[userId] = {
       id: [userId],

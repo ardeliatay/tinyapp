@@ -7,8 +7,13 @@
   <header>
     <% include ./partials/_header %>
   </header>
+    <form method="GET" action="/">
+    <button type="submit">Logout</button>
+    </form>
+    <h1> Hello <%= username %></h1>
   <% for (let urlName in urls) { %>
-  <% if (username){ %>
+  <form method="POST" action="/urls">
+  </form>
   <form method="POST" action="/urls/<%= urlName %>/delete">
     <ul>
       <li>
@@ -18,10 +23,9 @@
       </li>
   </ul>
   </form>
-    <% } else { %>
-      <form method="POST" action="/urls">
-    <% } %>
   <% }; %>
-  </ul>
+  <form method="GET" action="/urls/new">
+    <button type="submit">Create new URL</button>
+  </form>
 </body>
 </html>
