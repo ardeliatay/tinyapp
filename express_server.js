@@ -93,6 +93,14 @@ app.get('/urls/new', (req, res) => {
   res.render('urls_new', templateVars);
 });
 
+app.post('/urls/new', (req, res) => {
+  if (username) {
+    res.redirect('/urls');
+  } else {
+    res.redirect('/login');
+  }
+});
+
 app.get("/u/:shortURL", (req, res) => {
   let shortURLKey = req.params['shortURL'];
   let longURL = urlDatabase[shortURLKey];
@@ -128,7 +136,6 @@ app.post('/login', (req, res) => {
     res.status(400).send('YOU SHALL NOT PASS!');
   for (let key in users) {
     if (users && users[key].password === password) {
-
       res.redirect('/urls');
     } else {
       res.status(403).send('YOU SHALL NOT PASS!');
