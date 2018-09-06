@@ -18,6 +18,15 @@ function generateRandomString() {
   return text;
 }
 
+function generateRandomId() {
+  var text = '';
+  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+  for (var i = 0; i < 3; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  return text;
+}
+
 //Object to keep track of URLs and their shortened forms. Want to show this data on URLs page
 const users = {
   "user1": {
@@ -106,9 +115,15 @@ app.post('/urls/:id/delete', (req, res) => {
   res.redirect('/urls');
 });
 
+app.get('/login', (req, res) => {
+  res.render('login');
+});
+
 
 app.post('/login', (req, res) => {
-  res.cookie('username', req.body.username)
+  const {email, password} = req.body;
+  const user = users.find(u => u.email === email);
+  res.cookie('userId', req.body.userId)
   res.redirect('/urls');
 });
 
@@ -118,10 +133,18 @@ app.post('/logout', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-  res.render('urls_register');
+  res.render('urls_register', users);
 });
 
 app.post('/register', (req, res) => {
+  const {email, password} = req.body;
+  let userId = generateRandomId();
+  users[userId] = {
+      id: [userId],
+      email: email,
+      password: password
+  }
+  res.cookie('user_Id', users[userId].id);
   res.redirect('/urls');
 });
 
