@@ -123,10 +123,17 @@ app.get('/login', (req, res) => {
 
 
 app.post('/login', (req, res) => {
-  const {email, password} = req.body;
+  let {email, password} = req.body;
   if (!email || !password)
-    res.status(400).send('Thou Shall Not Pass');
-  res.redirect('/urls');
+    res.status(400).send('YOU SHALL NOT PASS!');
+  for (let key in users) {
+    if (users && users[key].password === password) {
+
+      res.redirect('/urls');
+    } else {
+      res.status(403).send('YOU SHALL NOT PASS!');
+    }
+  }
 });
 
 app.post('/logout', (req, res) => {
@@ -141,10 +148,10 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
   const {email, password} = req.body;
   if (!email || !password)
-    res.status(400).send('Thou Shall Not Pass');
-  for (var key in users) {
+    res.status(400).send('YOU SHALL NOT PASS!');
+  for (let key in users) {
     if (email === email)
-      res.status(400).send('Thou Shall Not Pass');
+      res.status(400).send('YOU SHALL NOT PASS!');
   }
   let userId = generateRandomId();
   users[userId] = {
