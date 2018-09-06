@@ -7,17 +7,21 @@
   <header>
     <% include ./partials/_header %>
   </header>
-  <ul>
-    <% for (let urlName in urls) { %>
+  <% for (let urlName in urls) { %>
+  <% if (username){ %>
+  <form method="POST" action="/urls/<%= urlName %>/delete">
+    <ul>
       <li>
         <%= urlName %> : <a style="color:#3b3a36;" href="<%= urls[urlName] %>"><%= urls[urlName] %></a>
-        <a style="color:#3b3a36;" href="/urls/<%= urlName %>">Edit</a>
-        <form method="POST" action="/urls/<%= urlName %>/delete">
-          <button type="submit">Delete</button>
-        </form>
+        <a style="color:#3b3a36;" href="/urls/<%= urlName %>" id="edit">Edit</a>
+        <button type="submit" class="button">Delete</button>
       </li>
-    <% }; %>
   </ul>
-  <a href='#'></a>
+  </form>
+    <% } else { %>
+      <form method="POST" action="/urls">
+    <% } %>
+  <% }; %>
+  </ul>
 </body>
 </html>

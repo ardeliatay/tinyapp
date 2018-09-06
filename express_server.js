@@ -24,9 +24,6 @@ let urlDatabase = {
   '9sm5xK': 'http://www.google.com'
 };
 
-
-
-//registers a handler on the root path '/'
 app.get('/', (req, res) => {
   res.send('Hello!');
 });
@@ -35,7 +32,6 @@ app.get('/', (req, res) => {
 //   res.json(urlDatabase);
 // });
 
-//render: look up file & .send built in
 app.get('/urls', (req, res) => {
   let templateVars = { //when sending vars to an ejs template, need to send them in object, even if only one variable
     urls: urlDatabase,
@@ -63,7 +59,6 @@ app.get('/urls/new', (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   //:shortURL is the key to req.params
   //req.params accesses database of {'shortURL': ___}
-  //.get usually uses .params
   let shortURLKey = req.params['shortURL'];
   let longURL = urlDatabase[shortURLKey];
   res.redirect(longURL);
@@ -95,6 +90,14 @@ app.post('/login', (req, res) => {
 
 app.post('/logout', (req, res) => {
   res.clearCookie('username', req.body.username);
+  res.redirect('/urls');
+});
+
+app.get('/register', (req, res) => {
+  res.render('urls_register');
+});
+
+app.post('/register', (req, res) => {
   res.redirect('/urls');
 });
 

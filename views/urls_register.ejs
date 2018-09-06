@@ -2,11 +2,10 @@
 <html lang='en'>
 <head>
   <title>TinyApp</title>
-  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-  <header>
-    <% include ./partials/_header %>
+  <header style="margin: 0px; padding: 20px; background-color: #c0dfd9;">
+    <h1 style="color: white; text-align: center; font-size: 80px">TinyApp</h1>
   </header>
     <form method="POST" action="/register">
       <div>
@@ -17,6 +16,9 @@
         <label for="password">Password</label>
         <input type="password" id="password" name="password">
       </div>
-  </form>
+      <div>
+        <button class="button" type="submit">Register</button>
+      </div>
+    </form>
 </body>
 </html>
