@@ -8,10 +8,24 @@
     <p><h1>TinyApp</h1></p>
   </header>
   <p>
+
+    <% if(username){ %>
+    <p>
+      <h3><%= username %></h3>
+      <form method="POST" action="/logout">
+        <button type="submit">Logout</button>
+      </form>
+    </p>
+
+
+    <% } else { %>
     <form method="POST" action="/login">
-      <input id="username" type="text" name="username" value="Enter username">
+      <input id="username" type="text" name="username" placeholder="Enter username">
       <button type="submit">Sign in</button>
+    <% } %>
     </form>
+
+
   </p>
 </body>
 </html>
