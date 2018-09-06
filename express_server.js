@@ -19,6 +19,30 @@ function generateRandomString() {
 }
 
 //Object to keep track of URLs and their shortened forms. Want to show this data on URLs page
+const users = {
+  "user1": {
+    id: "user1",
+    email: "jeff@example.com",
+    password: "nutella"
+  },
+ "user2": {
+    id: "user2",
+    email: "mandy@example.com",
+    password: "ginger"
+  },
+  "user3": {
+    id: "user3",
+    email: "angela@example.com",
+    password: "congee"
+  },
+  "user4": {
+    id: "user4",
+    email: "frank@example.com",
+    password: "1234"
+  }
+};
+
+
 let urlDatabase = {
   'b2xVn2' : 'http://www.lighthouselabs.ca',
   '9sm5xK': 'http://www.google.com'
