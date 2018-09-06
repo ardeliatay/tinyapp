@@ -83,7 +83,7 @@ app.post('/urls', (req, res) => {
   console.log(req.body.longURL);
   //.post usually uses .body
   // res.send('Ok');
-  res.send(`http://localhost:${PORT}/urls/${[randomString]}`);
+  res.redirect('/urls');
 });
 
 app.get('/urls/new', (req, res) => {
@@ -94,8 +94,6 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  //:shortURL is the key to req.params
-  //req.params accesses database of {'shortURL': ___}
   let shortURLKey = req.params['shortURL'];
   let longURL = urlDatabase[shortURLKey];
   res.redirect(longURL);

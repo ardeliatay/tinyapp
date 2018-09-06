@@ -6,14 +6,13 @@
 <body>
   <header>
     <% include ./partials/_header %>
-    <p>
-      <h2>ShortURL: <%= shortURL %></h2>
-    </p>
-
   </header>
-        <form method="POST" action="/urls/<%= shortURL %>/delete">
-          <input id="id" type="text" name="longURL" value="Enter new URL">
-          <button type="submit">Update</button>
-        </form>
+  <form method="POST" action="/urls/<%= shortURL %>">
+    <div>
+    <h2>ShortURL: <%= shortURL %></h2>
+    <input type="text" name="longURL" value="Enter new URL">
+    <button type="submit">Update</button>
+  </div>
+  </form>
 </body>
 </html>
