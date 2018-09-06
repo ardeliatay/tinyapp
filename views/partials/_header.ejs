@@ -4,8 +4,8 @@
   <title>TinyApp</title>
 </head>
 <body>
-  <header>
-    <p><h1>TinyApp</h1></p>
+  <header style="margin: 0px; padding: 20px; background-color: #c0dfd9;">
+    <h1 style="color: white; text-align: center; font-size: 80px">TinyApp</h1>
   </header>
   <p>
 
@@ -16,14 +16,15 @@
         <button type="submit">Logout</button>
       </form>
     </p>
-
-
     <% } else { %>
     <form method="POST" action="/login">
       <input id="username" type="text" name="username" placeholder="Enter username">
       <button type="submit">Sign in</button>
-    <% } %>
     </form>
+    <form method="POST" action="/register">
+      <button class="button" type="submit">Register</button>
+    </form>
+    <% } %>
 
 
   </p>
