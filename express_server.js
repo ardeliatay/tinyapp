@@ -18,6 +18,17 @@ function generateRandomString() {
   return text;
 }
 
+function urlsForUser(id) {
+  let smallDatabase = {};
+  for (var key in urlDatabaseNew) {
+    if (urlDataBase[key].userId === id) {
+      smallDatabase[key] = urlDataBase[key];
+    }
+  }
+  return smallDatabase;
+}
+
+
 //Object to keep track of URLs and their shortened forms. Want to show this data on URLs page
 const users = {
   'user1': {
@@ -47,12 +58,12 @@ let urlDatabaseNew = {
   'b2xVn2': {
     shortURL: 'b2xVn2',
     longURL: 'http://www.lighthouselabs.ca',
-    id: 'user1'
+    userId: 'user1'
   },
   '9sm5xK': {
     shortURL: '9sm5xK',
     longURL: 'http://www.google.com',
-    id: 'user2'
+    userId: 'user2'
   }
 };
 
@@ -119,14 +130,13 @@ app.post('/urls/:id', (req, res) => {
 });
 
 app.post('/urls/:id/delete', (req, res) => {
-  let userId = generateRandomString();
-  for (let key in urlDatabaseNew) {
-    if (urlDatabaseNew[req.params.id].id === ['user_id']) {
-      delete urlDatabaseNew[req.params.id];
-      res.redirect('/urls');
-    } else {
-      res.redirect('/login');
-    }
+  let userID = req.cookies['user_id']
+  let shortURL = req.params.id
+  if (urlDatabaseNew[shortURL].userId === userID) {
+    delete urlDatabaseNew[shortURL];
+      return res.redirect('/urls');
+  } else {
+    return res.redirect('/login');
   }
 });
 
