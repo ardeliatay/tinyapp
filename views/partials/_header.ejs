@@ -8,7 +8,7 @@
     <h1 style="color: white; text-align: center; font-size: 80px">TinyApp</h1>
   </header>
   <% if(userId){ %>
-    <form method="GET" action="/">
+    <form method="POST" action="/logout">
       <h1> Hello <%= userId.email %></h1>
     <button type="submit">Logout</button>
     </form>

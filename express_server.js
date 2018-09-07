@@ -18,15 +18,6 @@ function generateRandomString() {
   return text;
 }
 
-function generateRandomId() {
-  var text = '';
-  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-  for (var i = 0; i < 3; i++)
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  return text;
-}
-
 //Object to keep track of URLs and their shortened forms. Want to show this data on URLs page
 const users = {
   "user1": {
@@ -80,7 +71,7 @@ app.get('/', (req, res) => {
 app.get('/urls', (req, res) => {
   let templateVars = { //when sending vars to an ejs template, need to send them in object, even if only one variable
     urls: urlDatabaseNew,
-    userId: users[req.cookies.user_id]
+    userId: users[req.cookies['user_id']]
   };
   res.render('urls_index', templateVars);
 });
@@ -89,14 +80,12 @@ app.post('/urls', (req, res) => {
   let randomString = generateRandomString();
   urlDatabaseNew[randomString] = req.body.longURL
   console.log(req.body.longURL);
-  //.post usually uses .body
-  // res.send('Ok');
   res.redirect('/urls');
 });
 
 app.get('/urls/new', (req, res) => {
   let templateVars = {
-    userId: users[req.cookies.user_id]
+    userId: users[req.cookies['user_id']]
   }
   res.render('urls_new', templateVars);
 });
@@ -118,7 +107,7 @@ app.get("/u/:shortURL", (req, res) => {
 app.get('/urls/:id', (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
-    userId: users[req.cookies.user_id]
+    userId: users[req.cookies['user_id']]
   };
   res.render('urls_show', templateVars)
 });
@@ -129,8 +118,14 @@ app.post('/urls/:id', (req, res) => {
 });
 
 app.post('/urls/:id/delete', (req, res) => {
-  delete urlDatabaseNew[req.params.id];
-  res.redirect('/urls');
+  for (let key in users) {
+    if (users[key].id === req.cookies['user_id']) {
+      delete urlDatabaseNew[req.params.id];
+      res.redirect('/urls');
+    } else {
+      res.redirect('/login');
+    }
+  }
 });
 
 app.get('/login', (req, res) => {
@@ -153,7 +148,7 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  res.clearCookie('user_id', userId);
+  res.clearCookie('user_id');
   res.redirect('/');
 });
 
@@ -163,19 +158,20 @@ app.get('/register', (req, res) => {
 
 app.post('/register', (req, res) => {
   const {email, password} = req.body;
-  if (!email || !password)
-    return res.status(400).send('YOU SHALL NOT PASS!');
+  if (!email || !password) {
+    return res.status(400).send('YOU SHALL NOT PASS!!!');
   for (let key in users) {
     if (email === email)
       return res.status(400).send('YOU SHALL NOT PASS!');
   }
-  let userId = generateRandomId();
-  users[userId] = {
+}
+  let userId = generateRandomString();
+    users[userId] = {
       id: [userId],
       email: email,
       password: password
-  }
-  res.cookie('user_id', users[userId].id);
+    }
+  res.cookie('user_id', userId);
   res.redirect('/urls');
 });
 
