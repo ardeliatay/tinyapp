@@ -13,7 +13,7 @@
   <form method="POST" action="/urls/<%= key %>/delete">
     <ul>
       <li>
-        <%= key %> : <a style="color:#3b3a36;" href="<%= urls[key].longURL %>"><%= urls[key].longURL %></a>
+        <%= urls[key].shortURL %> : <a style="color:#3b3a36;" href="<%= urls[key].longURL %>"><%= urls[key].longURL %></a>
         <a style="color:#3b3a36;" href="/urls/<%= key %>" id="edit">Edit</a>
         <button type="submit" class="button">Delete</button>
       </li>

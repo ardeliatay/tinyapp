@@ -20,22 +20,22 @@ function generateRandomString() {
 
 //Object to keep track of URLs and their shortened forms. Want to show this data on URLs page
 const users = {
-  "user1": {
+  'user1': {
     id: "user1",
     email: "jeff@example.com",
     password: "nutella"
   },
- "user2": {
+  'user2': {
     id: "user2",
     email: "mandy@example.com",
     password: "ginger"
   },
-  "user3": {
+  'user3': {
     id: "user3",
     email: "angela@example.com",
     password: "congee"
   },
-  "user4": {
+  'user4': {
     id: "user4",
     email: "frank@example.com",
     password: "1234"
@@ -77,8 +77,9 @@ app.get('/urls', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
-  let randomString = generateRandomString();
-  urlDatabaseNew[randomString] = req.body.longURL
+  let userId = generateRandomString();
+  urlDatabase[userId] = userId
+  urlDatabaseNew[userId].longURL = req.body.longURL
   console.log(req.body.longURL);
   res.redirect('/urls');
 });
@@ -118,8 +119,9 @@ app.post('/urls/:id', (req, res) => {
 });
 
 app.post('/urls/:id/delete', (req, res) => {
-  for (let key in users) {
-    if (users[key].id === req.cookies['user_id']) {
+  let userId = generateRandomString();
+  for (let key in urlDatabaseNew) {
+    if (urlDatabaseNew[req.params.id].id === ['user_id']) {
       delete urlDatabaseNew[req.params.id];
       res.redirect('/urls');
     } else {
@@ -138,13 +140,12 @@ app.post('/login', (req, res) => {
   if (!email || !password)
     return res.status(400).send('YOU SHALL NOT PASS!');
   for (let key in users) {
-    if (users && users[key].password === password) {
-      res.cookie('user_id', users[key].id);
+    if (users[key].password === password) {
+      res.cookie('user_id', key);
       return res.redirect('/urls');
-    } else {
-      return res.status(403).send('YOU SHALL NOT PASS!');
     }
   }
+  res.status(403).send('YOU SHALL NOT PASS!');
 });
 
 app.post('/logout', (req, res) => {
