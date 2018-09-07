@@ -52,9 +52,17 @@ const users = {
 };
 
 
-let urlDatabase = {
-  'b2xVn2' : 'http://www.lighthouselabs.ca',
-  '9sm5xK': 'http://www.google.com'
+let urlDatabaseNew = {
+  'b2xVn2': {
+    shortURL: 'b2xVn2',
+    longURL: 'http://www.lighthouselabs.ca',
+    id: 'user1'
+  },
+  '9sm5xK': {
+    shortURL: '9sm5xK',
+    longURL: 'http://www.google.com',
+    id: 'user2'
+  }
 };
 
 app.get('/', (req, res) => {
@@ -71,15 +79,15 @@ app.get('/', (req, res) => {
 
 app.get('/urls', (req, res) => {
   let templateVars = { //when sending vars to an ejs template, need to send them in object, even if only one variable
-    urls: urlDatabase,
-    username: req.cookies['user_id']
+    urls: urlDatabaseNew,
+    userId: users[req.cookies.user_id]
   };
   res.render('urls_index', templateVars);
 });
 
 app.post('/urls', (req, res) => {
   let randomString = generateRandomString();
-  urlDatabase[randomString] = req.body.longURL
+  urlDatabaseNew[randomString] = req.body.longURL
   console.log(req.body.longURL);
   //.post usually uses .body
   // res.send('Ok');
@@ -88,40 +96,40 @@ app.post('/urls', (req, res) => {
 
 app.get('/urls/new', (req, res) => {
   let templateVars = {
-    username: req.cookies['user_id']
+    userId: users[req.cookies.user_id]
   }
   res.render('urls_new', templateVars);
 });
 
 app.post('/urls/new', (req, res) => {
-  if (username) {
-    res.redirect('/urls');
+  if (userId) {
+    return res.redirect('/urls');
   } else {
-    res.redirect('/login');
+    return res.redirect('/login');
   }
 });
 
 app.get("/u/:shortURL", (req, res) => {
   let shortURLKey = req.params['shortURL'];
-  let longURL = urlDatabase[shortURLKey];
+  let longURL = urlDatabaseNew[shortURLKey];
   res.redirect(longURL);
 });
 
 app.get('/urls/:id', (req, res) => {
   let templateVars = {
     shortURL: req.params.id,
-    username: req.cookies['user_id']
+    userId: users[req.cookies.user_id]
   };
   res.render('urls_show', templateVars)
 });
 
 app.post('/urls/:id', (req, res) => {
-  urlDatabase[req.params.id] = req.body.longURL;
+  urlDatabaseNew[req.params.id] = req.body.longURL;
   res.redirect('/urls');
 });
 
 app.post('/urls/:id/delete', (req, res) => {
-  delete urlDatabase[req.params.id];
+  delete urlDatabaseNew[req.params.id];
   res.redirect('/urls');
 });
 
@@ -133,19 +141,20 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   let {email, password} = req.body;
   if (!email || !password)
-    res.status(400).send('YOU SHALL NOT PASS!');
+    return res.status(400).send('YOU SHALL NOT PASS!');
   for (let key in users) {
     if (users && users[key].password === password) {
-      res.redirect('/urls');
+      res.cookie('user_id', users[key].id);
+      return res.redirect('/urls');
     } else {
-      res.status(403).send('YOU SHALL NOT PASS!');
+      return res.status(403).send('YOU SHALL NOT PASS!');
     }
   }
 });
 
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id', userId);
-  res.redirect('/urls');
+  res.redirect('/');
 });
 
 app.get('/register', (req, res) => {
@@ -155,10 +164,10 @@ app.get('/register', (req, res) => {
 app.post('/register', (req, res) => {
   const {email, password} = req.body;
   if (!email || !password)
-    res.status(400).send('YOU SHALL NOT PASS!');
+    return res.status(400).send('YOU SHALL NOT PASS!');
   for (let key in users) {
     if (email === email)
-      res.status(400).send('YOU SHALL NOT PASS!');
+      return res.status(400).send('YOU SHALL NOT PASS!');
   }
   let userId = generateRandomId();
   users[userId] = {
@@ -166,15 +175,9 @@ app.post('/register', (req, res) => {
       email: email,
       password: password
   }
-  res.cookie('user_Id', users[userId].id);
+  res.cookie('user_id', users[userId].id);
   res.redirect('/urls');
 });
-
-
-
-// app.get('/hello', (req, res) => {
-//   res.send('<html><body>Hello <b>World</b></body></html>\n');
-// });
 
 
 app.listen(PORT, () => {

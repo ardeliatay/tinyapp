@@ -7,5 +7,18 @@
   <header style="margin: 0px; padding: 20px; background-color: #c0dfd9;">
     <h1 style="color: white; text-align: center; font-size: 80px">TinyApp</h1>
   </header>
+  <% if(userId){ %>
+    <form method="GET" action="/">
+      <h1> Hello <%= userId.email %></h1>
+    <button type="submit">Logout</button>
+    </form>
+  <% } else { %>
+    <form method="GET" action="/register">
+      <button type="submit">Register</button>
+    </form>
+    <form method="GET" action="/login">
+      <button type="submit">Log in</button>
+    </form>
+  <% } %>
 </body>
 </html>
