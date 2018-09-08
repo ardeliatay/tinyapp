@@ -80,27 +80,24 @@ app.get('/', (req, res) => {
 // });
 
 app.get('/urls', (req, res) => {
-  let userId = req.cookies['user_id']
-  let smallDatabase = urlsForUser(userId);
-  let templateVars = { //when sending vars to an ejs template, need to send them in object, even if only one variable
-    smallDatabase: smallDatabase,
-    users: users,
-    userId: users[req.cookies['user_id']]
-  };
-  for (var key in users) {
-    if (users[key].id === userId) {
+    if (req.cookies['user_id']) {
+      let smallDatabase = urlsForUser(req.cookies['user_id']);
+      let templateVars = { //when sending vars to an ejs template, need to send them in object, even if only one variable
+        smallDatabase: smallDatabase,
+        userId: users[req.cookies['user_id']]
+        };
       res.render('urls_index', templateVars);
-    } else if (!req.cookies['user_id']) {
+    } else {
       res.redirect('/');
-    }
   }
 });
 
 app.post('/urls', (req, res) => {
-  let smallDatabase = urlsForUser(userId);
-  smallDatabase[userId] = userId
-  smallDatabase[userId].longURL = req.body.longURL
-  console.log(req.body.longURL);
+  let randomString = generateRandomString();
+    urlDatabaseNew[randomString] = [randomString];
+    urlDatabaseNew[randomString].userId = req.cookies['user_id'];
+    urlDatabaseNew[randomString].longURL= req.body.longURL;
+    urlDatabaseNew[randomString].shortURL = [randomString];
   res.redirect('/urls');
 });
 
@@ -125,9 +122,9 @@ app.post('/urls/new', (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  let smallDatabase = urlsForUser(userId);
   let shortURLKey = req.params['shortURL'];
-  let longURL = smallDatabase[shortURLKey];
+  let longURL = urlDatabaseNew[shortURLKey].longURL;
+  console.log(urlDatabaseNew, "FIRST ONE!!");
   res.redirect(longURL);
 });
 
@@ -140,8 +137,7 @@ app.get('/urls/:id', (req, res) => {
 });
 
 app.post('/urls/:id', (req, res) => {
-  let smallDatabase = urlsForUser(userId);
-  smallDatabase[req.params.id] = req.body.longURL;
+  urlDatabaseNew[req.params.id].longURL = req.body.longURL;
   res.redirect('/urls');
 });
 
