@@ -21,8 +21,8 @@ function generateRandomString() {
 function urlsForUser(id) {
   let smallDatabase = {};
   for (var key in urlDatabaseNew) {
-    if (urlDataBase[key].userId === id) {
-      smallDatabase[key] = urlDataBase[key];
+    if (urlDatabaseNew[key].userId === id) {
+      smallDatabase[key] = urlDatabaseNew[key];
     }
   }
   return smallDatabase;
@@ -80,26 +80,40 @@ app.get('/', (req, res) => {
 // });
 
 app.get('/urls', (req, res) => {
+  let userId = req.cookies['user_id']
+  let smallDatabase = urlsForUser(userId);
   let templateVars = { //when sending vars to an ejs template, need to send them in object, even if only one variable
-    urls: urlDatabaseNew,
+    smallDatabase: smallDatabase,
+    users: users,
     userId: users[req.cookies['user_id']]
   };
-  res.render('urls_index', templateVars);
+  for (var key in users) {
+    if (users[key].id === userId) {
+      res.render('urls_index', templateVars);
+    } else if (!req.cookies['user_id']) {
+      res.redirect('/');
+    }
+  }
 });
 
 app.post('/urls', (req, res) => {
-  let userId = generateRandomString();
-  urlDatabase[userId] = userId
-  urlDatabaseNew[userId].longURL = req.body.longURL
+  let smallDatabase = urlsForUser(userId);
+  smallDatabase[userId] = userId
+  smallDatabase[userId].longURL = req.body.longURL
   console.log(req.body.longURL);
   res.redirect('/urls');
 });
 
 app.get('/urls/new', (req, res) => {
   let templateVars = {
-    userId: users[req.cookies['user_id']]
+    userId: users[req.cookies['user_id']],
+    email: users[req.cookies['user_id']].email
   }
+  if (!req.cookies['user_id']) {
+    res.redirect('/')
+  } else {
   res.render('urls_new', templateVars);
+  }
 });
 
 app.post('/urls/new', (req, res) => {
@@ -111,8 +125,9 @@ app.post('/urls/new', (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
+  let smallDatabase = urlsForUser(userId);
   let shortURLKey = req.params['shortURL'];
-  let longURL = urlDatabaseNew[shortURLKey];
+  let longURL = smallDatabase[shortURLKey];
   res.redirect(longURL);
 });
 
@@ -125,14 +140,15 @@ app.get('/urls/:id', (req, res) => {
 });
 
 app.post('/urls/:id', (req, res) => {
-  urlDatabaseNew[req.params.id] = req.body.longURL;
+  let smallDatabase = urlsForUser(userId);
+  smallDatabase[req.params.id] = req.body.longURL;
   res.redirect('/urls');
 });
 
 app.post('/urls/:id/delete', (req, res) => {
-  let userID = req.cookies['user_id']
+  let userId = req.cookies['user_id']
   let shortURL = req.params.id
-  if (urlDatabaseNew[shortURL].userId === userID) {
+  if (urlDatabaseNew[shortURL].userId === userId) {
     delete urlDatabaseNew[shortURL];
       return res.redirect('/urls');
   } else {

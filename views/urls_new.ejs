@@ -3,19 +3,10 @@
   <body>
     <header>
     <% include partials/_header %>
-    </header>
-    <% if(userId){ %>
     <form action="/urls" method="POST" style="margin:150px; text-align: center;">
       <label for="longURL">Enter a URL:</label>
       <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
       <input type="submit" value="Submit">
     </form>
-    <% } else { %>
-    <form action="/login" method="GET" style="margin:150px; text-align: center;">
-      <label for="longURL">Enter a URL:</label>
-      <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
-      <input type="submit" value="Submit">
-    </form>
-    <% } %>
   </body>
 </html>
