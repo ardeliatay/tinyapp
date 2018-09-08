@@ -1,22 +1,21 @@
 const express = require('express');
 const app = express();
-const PORT = 8080; //this is a default port
+const PORT = 8080;
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-//tells express app to use EJS as its templating engine
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 
 
 function generateRandomString() {
-  var text = '';
-  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let randomString = '';
+  let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  for (let i = 0; i < 6; i++)
+    randomString += possible.charAt(Math.floor(Math.random() * possible.length));
+  return randomString;
+};
 
-  for (var i = 0; i < 6; i++)
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  return text;
-}
 
 function urlsForUser(id) {
   let smallDatabase = {};
@@ -26,30 +25,29 @@ function urlsForUser(id) {
     }
   }
   return smallDatabase;
-}
+};
 
 
-//Object to keep track of URLs and their shortened forms. Want to show this data on URLs page
 const users = {
   'user1': {
-    id: "user1",
-    email: "jeff@example.com",
-    password: "nutella"
+    id: 'user1',
+    email: 'jeff@example.com',
+    password: 'nutella'
   },
   'user2': {
-    id: "user2",
-    email: "mandy@example.com",
-    password: "ginger"
+    id: 'user2',
+    email: 'mandy@example.com',
+    password: 'ginger'
   },
   'user3': {
-    id: "user3",
-    email: "angela@example.com",
+    id: 'user3',
+    email: 'angela@example.com',
     password: "congee"
   },
   'user4': {
-    id: "user4",
-    email: "frank@example.com",
-    password: "1234"
+    id: 'user4',
+    email: 'frank@example.com',
+    password: '1234'
   }
 };
 
@@ -92,33 +90,24 @@ app.get('/urls', (req, res) => {
   }
 });
 
-app.post('/urls', (req, res) => {
-  let randomString = generateRandomString();
-    urlDatabaseNew[randomString] = [randomString];
-    urlDatabaseNew[randomString].userId = req.cookies['user_id'];
-    urlDatabaseNew[randomString].longURL= req.body.longURL;
-    urlDatabaseNew[randomString].shortURL = [randomString];
-  res.redirect('/urls');
-});
-
 app.get('/urls/new', (req, res) => {
+  let userId = req.cookies['user_id']
   let templateVars = {
-    userId: users[req.cookies['user_id']],
-    email: users[req.cookies['user_id']].email
-  }
+    userId: users[req.cookies['user_id']]
+  };
   if (!req.cookies['user_id']) {
-    res.redirect('/')
+    return res.status(400).send('Please log in first!');
   } else {
   res.render('urls_new', templateVars);
   }
 });
 
-app.post('/urls/new', (req, res) => {
-  if (userId) {
-    return res.redirect('/urls');
-  } else {
-    return res.redirect('/login');
-  }
+app.get('/urls/:id', (req, res) => {
+  let templateVars = {
+    shortURL: req.params.id,
+    userId: users[req.cookies['user_id']]
+  };
+  res.render('urls_show', templateVars)
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -128,12 +117,13 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
-app.get('/urls/:id', (req, res) => {
-  let templateVars = {
-    shortURL: req.params.id,
-    userId: users[req.cookies['user_id']]
-  };
-  res.render('urls_show', templateVars)
+app.post('/urls', (req, res) => {
+  let randomString = generateRandomString();
+    urlDatabaseNew[randomString] = [randomString];
+    urlDatabaseNew[randomString].userId = req.cookies['user_id'];
+    urlDatabaseNew[randomString].longURL= req.body.longURL;
+    urlDatabaseNew[randomString].shortURL = [randomString];
+  res.redirect('/urls');
 });
 
 app.post('/urls/:id', (req, res) => {
@@ -156,48 +146,58 @@ app.get('/login', (req, res) => {
   res.render('login', users);
 });
 
+app.get('/register', (req, res) => {
+  res.render('urls_register', users);
+});
 
 app.post('/login', (req, res) => {
   let {email, password} = req.body;
   if (!email || !password)
-    return res.status(400).send('YOU SHALL NOT PASS!');
+    return res.status(400).send('YOU SHALL NOT PASS! Enter text field.');
   for (let key in users) {
     if (users[key].password === password) {
       res.cookie('user_id', key);
       return res.redirect('/urls');
     }
   }
-  res.status(403).send('YOU SHALL NOT PASS!');
+  res.status(403).send('YOU SHALL NOT PASS! Wrong password or email.');
+});
+
+app.post('/register', (req, res) => {
+  const {email, password} = req.body;
+  if (!email || !password) {
+    return res.status(400).send('YOU SHALL NOT PASS! Enter text field.');
+  } else{ //in the else block when the Email and Password are not blank
+
+    //check for the User email if it already exists
+    var flag = false;
+    for(var key in users){
+      if(users[key].email===email){
+        flag = true;
+      }
+    }
+    if(flag) { //means the email already exists
+       res.status(400).send('Email already exists. Please try using another email log');
+    } else{ //email does not exist
+      //Create a new user
+
+      let userId = generateRandomString();
+          users[userId] = {
+            id: [userId],
+            email: email,
+            password: password
+      };
+      res.cookie('user_id', userId);
+      res.redirect('/urls');
+
+    }
+  }
 });
 
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
   res.redirect('/');
 });
-
-app.get('/register', (req, res) => {
-  res.render('urls_register', users);
-});
-
-app.post('/register', (req, res) => {
-  const {email, password} = req.body;
-  if (!email || !password) {
-    return res.status(400).send('YOU SHALL NOT PASS!!!');
-  for (let key in users) {
-    if (email === email)
-      return res.status(400).send('YOU SHALL NOT PASS!');
-  }
-}
-  let userId = generateRandomString();
-    users[userId] = {
-      id: [userId],
-      email: email,
-      password: password
-    }
-  res.cookie('user_id', userId);
-  res.redirect('/urls');
-});
-
 
 app.listen(PORT, () => {
   console.log(`Tinyapp listening on port ${PORT}!`);
