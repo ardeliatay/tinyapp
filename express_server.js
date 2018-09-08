@@ -11,7 +11,7 @@ app.use(cookieSession({
   keys:["testkey"]
 }));
 
-
+//Assigns a alphanumeric random ID to users
 function generateRandomString() {
   let randomString = '';
   let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -20,7 +20,7 @@ function generateRandomString() {
   return randomString;
 };
 
-
+//Creates a database specific to a user that stores their information
 function urlsForUser(id) {
   let smallDatabase = {};
   for (var key in urlDatabaseNew) {
@@ -81,10 +81,11 @@ app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
 
+//If user is logged in, shows database specific to that user
 app.get('/urls', (req, res) => {
     if (req.session['user_id']) {
       let smallDatabase = urlsForUser(req.session['user_id']);
-      let templateVars = { //when sending vars to an ejs template, need to send them in object, even if only one variable
+      let templateVars = {
         smallDatabase: smallDatabase,
         userId: users[req.session['user_id']]
         };
@@ -94,6 +95,7 @@ app.get('/urls', (req, res) => {
   }
 });
 
+//If User is logged in, displays page where user can create a new short link
 app.get('/urls/new', (req, res) => {
   let userId = req.session['user_id']
   let templateVars = {
@@ -111,7 +113,7 @@ app.get('/urls/:id', (req, res) => {
     shortURL: req.params.id,
     userId: users[req.session['user_id']]
   };
-  res.render('urls_show', templateVars)
+  res.render('urls_show', templateVars);
 });
 
 app.get("/u/:shortURL", (req, res) => {
@@ -120,6 +122,7 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+//Generates a short URL, saves it to user's URL page
 app.post('/urls', (req, res) => {
   let randomString = generateRandomString();
     urlDatabaseNew[randomString] = [randomString];
@@ -129,19 +132,20 @@ app.post('/urls', (req, res) => {
   res.redirect('/urls');
 });
 
+//Updates URL and redirects to /url
 app.post('/urls/:id', (req, res) => {
   urlDatabaseNew[req.params.id].longURL = req.body.longURL;
   res.redirect('/urls');
 });
 
 app.post('/urls/:id/delete', (req, res) => {
-  let userId = req.session['user_id']
-  let shortURL = req.params.id
+  let userId = req.session['user_id'];
+  let shortURL = req.params.id;
   if (urlDatabaseNew[shortURL].userId === userId) {
     delete urlDatabaseNew[shortURL];
       return res.redirect('/urls');
   } else {
-    return res.redirect('/login');
+    res.redirect('/login');
   }
 });
 
@@ -155,32 +159,34 @@ app.get('/register', (req, res) => {
 
 app.post('/login', (req, res) => {
   let {email, password} = req.body;
-  if (!email || !password)
-    return res.status(400).send('YOU SHALL NOT PASS! Enter in text field.');
+  if (!email || !password) {
+    res.status(400).send('YOU SHALL NOT PASS! Enter in text field.');
+  }
   for (let key in users) {
-    bcrypt.compareSync(password, users[key].password);
-      req.session['user_id'] = key;
-      return res.redirect('/urls');
+    if(bcrypt.compareSync(password, users[key].password)) {
+      req.session['user_id'] = users[key].id;
+      res.redirect('/urls');
+    }
   }
   res.status(403).send('YOU SHALL NOT PASS! Wrong password/email.');
 });
 
 app.post('/register', (req, res) => {
   const {email, password} = req.body;
+  const hashedPassword = bcrypt.hashSync(password, 10);
   if (!email || !password) {
-    return res.status(400).send('YOU SHALL NOT PASS! Enter in text field.');
-  } else{ //in the else block when the Email and Password are not blank
-
-    //check for the User email if it already exists
+    res.status(400).send('YOU SHALL NOT PASS! Enter in text field.');
+  } else {
+    //Checks to see if email already exists in database
     var flag = false;
-    for(var key in users){
-      if(users[key].email===email){
+    for (var key in users) {
+      if (users[key].email===email) {
         flag = true;
       }
     }
-    if(flag) { //means the email already exists
+    if (flag) {
        res.status(400).send('Email already exists. Please try using another email.');
-    } else{ //email does not exist
+    } else { //Email does not exist
       //Create a new user
 
       let userId = generateRandomString();
@@ -191,7 +197,6 @@ app.post('/register', (req, res) => {
       };
       req.session['user_id'] = userId;
       res.redirect('/urls');
-
     }
   }
 });
