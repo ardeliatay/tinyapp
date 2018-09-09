@@ -161,15 +161,28 @@ app.post('/login', (req, res) => {
   let {email, password} = req.body;
   if (!email || !password) {
     res.status(400).send('YOU SHALL NOT PASS! Enter in text field.');
-  }
-  for (let key in users) {
-    if(bcrypt.compareSync(password, users[key].password)) {
-      req.session['user_id'] = users[key].id;
-      res.redirect('/urls');
+  } else {
+      let flat = false;
+      let userKey;
+      for (let key in users) {
+        if (users[key].email === email) {
+        flag = true;
+        userKey = key
+      }
+    } //Checks to see if password matches user key
+        if(flag) {
+          if(bcrypt.compareSync(password, users[userKey].password)) {
+            req.session['user_id'] = users[userKey].id;
+            res.redirect('/urls');
+          } else {
+            res.status(403).send('YOU SHALL NOT PASS! Wrong password');
+        }
+    } else {
+      res.status(403).send('YOU SHALL NOT PASS! Wrong email.');
     }
   }
-  res.status(403).send('YOU SHALL NOT PASS! Wrong password/email.');
 });
+
 
 app.post('/register', (req, res) => {
   const {email, password} = req.body;
@@ -180,7 +193,7 @@ app.post('/register', (req, res) => {
     //Checks to see if email already exists in database
     var flag = false;
     for (var key in users) {
-      if (users[key].email===email) {
+      if (users[key].email === email) {
         flag = true;
       }
     }
@@ -195,7 +208,7 @@ app.post('/register', (req, res) => {
             email: email,
             password: hashedPassword
       };
-      req.session['user_id'] = userId;
+      req.session['user_id'] = users[userId].id;
       res.redirect('/urls');
     }
   }

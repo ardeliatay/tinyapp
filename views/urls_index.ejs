@@ -10,10 +10,10 @@
   <% for (var key in smallDatabase) { %>
   <form method="POST" action="/urls">
   </form>
-  <form method="POST" action="/urls/<%= key %>/delete">
+  <form method="POST" action="/urls/<%= key %>/delete" style="font-family:Roboto; color: #6B6565;">
     <ul>
       <li>
-         http://localhost:8080/u/<%= key %> : <a style="color:#3b3a36;" href="<%= smallDatabase[key].longURL %>"><%= smallDatabase[key].longURL %></a>
+         http://localhost:8080/u/<%= key %> : <a style="color:#6B6565;" href="<%= smallDatabase[key].longURL %>"><%= smallDatabase[key].longURL %></a>
         <a style="color:#3b3a36;" href="/urls/<%= key %>" id="edit">Edit</a>
         <button type="submit" class="button">Delete</button>
       </li>
@@ -23,6 +23,5 @@
   <form method="GET" action="/urls/new">
     <button type="submit">Create a New Short Link</button>
   </form>
-
 </body>
 </html>

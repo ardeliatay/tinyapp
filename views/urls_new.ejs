@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-  <head></head>
+  <head>
+    <title>TinyApp</title>
+  </head>
   <body>
     <header>
-    <% include partials/_header %>
-    <form action="/urls" method="POST" style="margin:150px; text-align: center;">
+      <% include partials/_header %>
+    </header>
+    <form action="/urls" method="POST" style="margin:150px; text-align: center; font-family:Roboto; color: #6B6565;">
       <label for="longURL">Enter a URL:</label>
       <input id="longURL" type="text" name="longURL" placeholder="http://" style="width: 300px">
       <input type="submit" value="Submit">
