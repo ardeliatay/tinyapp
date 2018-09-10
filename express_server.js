@@ -204,7 +204,7 @@ app.post('/register', (req, res) => {
 
       let userId = generateRandomString();
           users[userId] = {
-            id: [userId],
+            id: userId,
             email: email,
             password: hashedPassword
       };
